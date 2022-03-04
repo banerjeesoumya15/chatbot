@@ -3,7 +3,7 @@ from nltk.stem import WordNetLemmatizer
 import json
 import pickle
 
-#import numpy as np
+import numpy as np
 import random
 
 words = []
@@ -46,3 +46,32 @@ with open('words.pkl', 'wb') as lem_file:
     pickle.dump(words, lem_file)
 with open('classes.pkl', 'wb') as classes_file:
     pickle.dump(classes, classes_file)
+
+# create training data
+training = []
+output_row = [0] * len(classes)
+for doc in documents:
+    bow = []
+    #pattern_words = doc[0]
+
+    # lemmatize each word
+    pattern_words = [lemmatizer.lemmatize(word.lower()) for word in doc[0]]
+
+    # create bag of words
+    for w in words:
+        bow.append(1) if w in pattern_words else bow.append(0)
+
+    # output is a 0 for each tag and 1 for current tag (for each patern)
+    output_row[classes.index(doc[1])] = 1
+
+    training.append([bow, output_row])
+
+# shuffle and change to numpy array
+random.shuffle(training)
+training = np.array(training, dtype=object)
+
+# create train set
+# X - patterns, Y - intents
+train_x = list(training[:,0])
+train_y = list(training[:,1])
+print("Train test data created")
