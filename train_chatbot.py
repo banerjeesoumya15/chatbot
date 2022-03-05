@@ -1,4 +1,3 @@
-from tabnanny import verbose
 import nltk
 from nltk.stem import WordNetLemmatizer
 import json
